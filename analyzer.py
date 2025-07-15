@@ -2,14 +2,26 @@ import ollama
 import os
 import sys
 
-CHUNK_SIZE = 150  # lines per chunk
+CHUNK_SIZE = 150  # lines per chunk, modify as needed
 
 def chunk_code(code, size=CHUNK_SIZE):
+    """
+
+    :param code: the source code
+    :param size: default is CHUNK_SIZE
+    :return: generates the chunk code
+    """
     lines = code.splitlines()
     for i in range(0, len(lines), size):
         yield i + 1, "\n".join(lines[i:i + size])
 
 def build_prompt(chunk, start_line):
+    """
+
+    :param chunk: the chunck code
+    :param start_line: base line start the chunck
+    :return: the prompt for the chunck
+    """
     return f""" 
 You are a security expert. Analyze the following C/C++ code (starting at line {start_line}) for vulnerabilities.
 
@@ -40,8 +52,8 @@ def main():
     with open(file_to_analyze, 'r') as f:
         code = f.read()
 
-    client = ollama.Client()
-    model = "gemma3:4b"
+    client = ollama.Client() #open a client server API call
+    model = "gemma3:4b" #change as needed
 
     for start_line, chunk in chunk_code(code):
         prompt = build_prompt(chunk, start_line)
