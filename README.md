@@ -14,6 +14,14 @@ This CLI tool detects security vulnerabilities in C/C++ source files using a loc
 
 ---
 
+## 🌐 Offline Usage
+**Once you have built the Docker image and pulled the required model (e.g., `gemma3:4b`), you can run all analysis and vulnerability detection completely offline, with no internet connection required.**
+
+- The only steps that require internet access are the initial Docker image build and model download.
+- After setup, you can disconnect from the internet and continue analyzing files securely and privately on your local machine.
+
+---
+
 ## 📦 Requirements
 - Docker & Docker Compose
 
