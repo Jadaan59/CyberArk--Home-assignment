@@ -72,6 +72,7 @@ Or if you want smaller version
 ```bash
 ollama pull gemma3:1b
 ```
+Or copy the attached Google Drive model
 Make sure the model download finishes completely before continuing.
 
 ---

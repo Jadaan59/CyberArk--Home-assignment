@@ -18,7 +18,7 @@ The Ollama server had some limitations. To deal with that, I wrote logic to spli
 ## 9. ✅ Initial Success
 Once the virtual environment setup was working, I shared the tool with a few friends—it worked for them too. That gave me the green light to continue.
 ## 10. 🧪 Planning for Docker + Automation
-With a working version ready, I turned my focus back to Docker, planning to integrate it later with some automation.
+With a working version ready, I turned my focus back to Docker, planning to integrate it later with some automation. I experimented with Docker and tried running Ollama inside a container, but due to model pull limitations during build-time and the nature of the serve loop, I decided to keep the tool lightweight and local for this version.
 ## 11. 🧩 Final Touches 
 I built a precise process for chunking and analysis to ensure performance and reliability. It also prevented the model from consuming too much time or memory.
 ## 12. 🚀 Ready for Submission
