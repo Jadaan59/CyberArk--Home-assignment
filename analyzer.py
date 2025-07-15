@@ -1,106 +1,57 @@
-import argparse
-import subprocess
-import re
+import ollama
 import os
+import sys
 
-CHUNK_SIZE = 300
-OVERLAP = 20
+CHUNK_SIZE = 200  # lines per chunk
 
-def read_file_lines(filepath):
-    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-        return f.readlines()
+def chunk_code(code, size=CHUNK_SIZE):
+    lines = code.splitlines()
+    for i in range(0, len(lines), size):
+        yield i + 1, "\n".join(lines[i:i + size])
 
-def chunk_lines(lines):
-    for i in range(0, len(lines), CHUNK_SIZE - OVERLAP):
-        yield i, lines[i:i + CHUNK_SIZE]
+def build_prompt(chunk, start_line):
+    return f""" 
+You are a security expert. Analyze the following C/C++ code (starting at line {start_line}) for vulnerabilities.
 
-def build_prompt(chunk, with_fix=False):
-    instructions = "You are a security analysis expert. You analyze C/C++ source code and identify potential vulnerabilities."
-    if with_fix:
-        instructions += " For each issue, also suggest a one-line fix if possible."
-    instructions += " Respond only in this format: Line <number>: <description>. [Optional Fix: <fix>]"
-    code = "".join(chunk)
-    return f"{instructions}\n\n{code}"
+For each issue you find, use this format:
 
-def query_llm(prompt, chunk_index):
-    print(f"\n🧠 [Chunk {chunk_index}] Sending prompt to LLM...")
-    try:
-        result = subprocess.run(
-            ["ollama", "run", "gemma3:1b"],
-            input=prompt.encode(),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=180  # prevent hanging forever
-        )
-        stderr = result.stderr.decode()
-        if stderr:
-            print(f"⚠️ Ollama stderr:\n{stderr}")
-        output = result.stdout.decode()
-        print(f"✅ LLM response received (Chunk {chunk_index})")
-        print(f"--- Raw Output ---\n{output[:500]}...\n")  # Print first 500 chars
-        return output
-    except subprocess.TimeoutExpired:
-        print(f"⏱️ Timeout: LLM took too long on chunk {chunk_index}")
-        return ""
+‼️ Vulnerability detected at line X (make sure the line is good) :
+Code: `...`
+Issue: ...
+Suggested Fix: ...
 
-def parse_output(output):
-    findings = []
-    pattern = re.compile(r"Line (\d+): (.*?)(?:\. \[Optional Fix: (.*?)\])?")
-    for match in pattern.finditer(output):
-        line, desc, fix = match.groups()
-        findings.append((int(line), desc.strip(), fix.strip() if fix else None))
-    return findings
+Here is the code to analyze:
+------------------------------
+{chunk}
+------------------------------
 
-def analyze_file(filepath, with_fix=False):
-    lines = read_file_lines(filepath)
-    all_findings = []
-
-    for i, (start_idx, chunk) in enumerate(chunk_lines(lines), start=1):
-        prompt = build_prompt(chunk, with_fix)
-        output = query_llm(prompt, i)
-        findings = parse_output(output)
-        if not findings:
-            print(f"⚠️ No findings detected in Chunk {i}. Possibly unrecognized format.")
-        all_findings.extend(findings)
-
-    return sorted(all_findings, key=lambda x: x[0])
-
-def print_findings(findings, with_fix=False):
-    if not findings:
-        print("✅ No vulnerabilities found.")
-        return
-
-    print("\n🔒 Detected Vulnerabilities:")
-    for line, desc, fix in findings:
-        print(f"Line {line}: {desc}.")
-        if with_fix and fix:
-            print(f"  Suggested Fix: {fix}")
+Remember to write short answers, dont write unnecessarily lines.
+"""
 
 def main():
-    parser = argparse.ArgumentParser(description="LLM-based C/C++ vulnerability analyzer")
-    parser.add_argument("source_file", help="C/C++ source file to analyze")
-    parser.add_argument("--fix", action="store_true", help="Suggest fixes for vulnerabilities")
-    parser.add_argument("--output", default="vuln_report.txt", help="Output file for results")
-    args = parser.parse_args()
+    print("📁 analyzer.py running...")
+    file_to_analyze = sys.argv[1] if len(sys.argv) > 1 else None
+    print(f"📂 File to analyze: {file_to_analyze}")
 
-    print(f"📄 Analyzing: {args.source_file}")
-    if not os.path.exists(args.source_file):
-        print(f"❌ File not found: {args.source_file}")
+    if not file_to_analyze or not os.path.exists(file_to_analyze):
+        print("❌ File not provided or not found.")
         return
 
-    findings = analyze_file(args.source_file, with_fix=args.fix)
+    with open(file_to_analyze, 'r') as f:
+        code = f.read()
 
-    with open(args.output, "w") as f:
-        if not findings:
-            f.write("✅ No vulnerabilities found.\n")
-        else:
-            for line, desc, fix in findings:
-                f.write(f"Line {line}: {desc}.\n")
-                if args.fix and fix:
-                    f.write(f"  Suggested Fix: {fix}\n")
+    client = ollama.Client()
+    model = "gemma3:4b"
 
-    print(f"✅ Analysis complete. Report saved to {args.output}")
+    for start_line, chunk in chunk_code(code):
+        prompt = build_prompt(chunk, start_line)
+        try:
+            print(f"\n🔎 Analyzing lines {start_line}–{start_line + CHUNK_SIZE - 1}...")
+            response = client.generate(model=model, prompt=prompt)
+            output = response['response'] if isinstance(response, dict) else response.response
+            print(output)
+        except Exception as e:
+            print(f"❌ Failed analyzing chunk starting at line {start_line}: {e}")
 
 if __name__ == "__main__":
-    print("🚀 Analyzer started")
     main()
