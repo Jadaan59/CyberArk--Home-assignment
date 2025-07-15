@@ -1,28 +1,37 @@
-# Use a lightweight Python base image
-FROM python:3.10-slim
+FROM ubuntu:22.04
 
-# Set environment variables
-ENV VIRTUAL_ENV=/opt/venv
-RUN python -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
 # Install dependencies
-RUN pip install --no-cache-dir ollama
+RUN apt-get update && apt-get install -y \
+    software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update && apt-get install -y \
+    python3.12 \
+    python3.12-venv \
+    curl \
+    wget \
+    && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
 
-# Install curl (needed for Ollama install)
-RUN apt-get update && apt-get install -y curl gnupg && apt-get clean
 
-# Download and install Ollama
+WORKDIR /app
+COPY data /app
+
+RUN pip install -r deps/requirements.txt
+
+# Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Set working directory
-WORKDIR /app
+# Start Ollama in background, wait until it's ready, then pull the model
+RUN nohup ollama serve > /tmp/ollama.log 2>&1 & \
+    sleep 10 && \
+    ollama pull gemma3:4b && \
+    pkill ollama
 
-# Copy project files into the container
-COPY . /app
+# Expose default Ollama port
+EXPOSE 11434:11434
+ENV OLLAMA_HOST=0.0.0.0:11434
 
-# Expose port for Ollama server
-EXPOSE 11434
-
-# Run Ollama in background and analyzer.py (entrypoint can be changed)
-CMD ["bash"]
+# Default command
+CMD ["ollama", "serve"]

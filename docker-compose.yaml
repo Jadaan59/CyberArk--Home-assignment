@@ -1,0 +1,18 @@
+---
+services:
+  ollama:
+    build:
+      context: .       # Use current directory
+      dockerfile: Dockerfile  # Optional if your file is named 'Dockerfile'
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    volumes:
+      - ./data:/app
+    working_dir: /app
+    network_mode: host
+    deploy:
+      resources:
+        limits: {}
+        reservations: {}

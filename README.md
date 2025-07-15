@@ -15,157 +15,65 @@ This CLI tool detects security vulnerabilities in C/C++ source files using a loc
 ---
 
 ## 📦 Requirements
-
-- Python 3.8 or newer
-- [Ollama](https://ollama.com) installed on your machine
-- An Ollama-compatible model (e.g., `gemma3:4b`) downloaded locally
+- Docker & Docker Compose
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation & Setup
 
 ### 1. Clone the Repository
-
 ```bash
-git https://github.com/Jadaan59/CyberArk--Home-assignment.git
+git clone https://github.com/Jadaan59/CyberArk--Home-assignment.git
 cd CyberArk--Home-assignment
 ```
+## 🐳 Docker Setup
+You can run Ollama in a container using the provided Dockerfile and docker-compose:
 
-### 2. Set Up Virtual Environment and python
-
-#### 🐍 Don't Have Python Installed?
-
-No worries — here's how to get it:
-
-#### 🔸 Windows:
-1. Go to: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
-2. Download the latest version (Python 3.10+ recommended)
-3. During installation, **make sure to check**: ✅ *"Add Python to PATH"*
-
-#### 🔸 macOS:
-You can install Python using [Homebrew](https://brew.sh):
 ```bash
-brew install python
-````
-
-#### 🔸 Linux (optional):
-```bash
-sudo apt update
-sudo apt install python3 python3-venv python3-pip
+docker-compose up --build
 ```
-#### ✅ Create and Activate the Virtual Environment
-```bash
-python3 -m venv venv
-source venv/bin/activate     # On Windows: venv\Scripts\activate
-```
-
-### 3. Install Python Dependencies
-
-```bash
-pip install ollama
-```
-
-### 4. Install Ollama
-
-Follow instructions from [ollama.com/download](https://ollama.com/download) or use:
-
-#### macOS (via Homebrew)
-```bash
-brew install ollama
-```
-
-#### Linux
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-```
-
-#### Windows
-Use the [official installer](https://ollama.com/download)
+This exposes Ollama on port 11434 and mounts the `data/` directory.
 
 ---
 
-### 5. Download a Model (e.g., Gemma 4B)
-
+## 🏃 Usage
+### Copy the required file to analyze into the data folder
 ```bash
-ollama pull gemma3:4b
-```
-Or if you want smaller version 
-```bash
-ollama pull gemma3:1b
-```
-Or copy the attached Google Drive model
-Make sure the model download finishes completely before continuing.
-
----
-
-### 6. Start the Ollama Server
-
-Open a separate terminal and run:
-
-```bash
-ollama serve
+cp <path_to_file> <repo_location>/data
 ```
 
-Leave this running in the background — it acts as a local API server.
-
----
-
-### 7. Run the Analyzer
-
-In your main terminal (with the virtual environment activated):
-
+### Open a new shell inside the container
 ```bash
-python analyzer.py path/to/your/code.c
+docker exec -it <container-name> bash
 ```
 
-Example:
-
+### Analyze a C/C++ File
 ```bash
-python analyzer.py library.c
+python3.12 analyzer.py <file_to_analze>
 ```
+Replace `data/library.c` with your own C/C++ file as needed.
 
----
-
-## 🧠 Sample Output
-
-```text
-🔎 Analyzing lines 1–80...
-
+### Example Output
+```
+🔎 Analyzing lines 1–150...
 ‼️ Vulnerability detected at line 33:
 Code: typedef struct Book { ... }
 Issue: No bounds checking on strings (`title`, `author`)
 Suggested Fix: Use strncpy, and validate input length before copy
-
-‼️ Vulnerability detected at line 101:
-Code: int member_id;
-Issue: Possible overflow with high user count
-Suggested Fix: Add boundary check before assigning new member ID
 ```
-
----
-
-## 🛠 Customization
-
-You can edit `analyzer.py` to:
-
-- Change the LLM model:
-  ```python
-  model = "gemma3:4b"
-  ```
-- Modify the prompt to suit your own rules
-- Adjust chunk size for large files:
-  ```python
-  chunk_size = 80  # lines per chunk
-  ```
 
 ---
 
 ## 🗂 Project Structure
-
 ```
-.
-├── analyzer.py        # Main CLI script
-├── library.c          # Sample file for testing (optional)
-├── README.md          # You’re reading it
-├── venv/              # Python virtual environment (excluded from repo)
+CyberArk--Home-assignment/
+├── data/
+│   ├── analyzer.py        # Main CLI script
+│   ├── library.c          # Sample C file for testing
+│   └── deps/
+│       └── requirements.txt # Python dependencies
+├── docker-compose.yaml    # Docker Compose for Ollama
+├── Dockerfile             # Dockerfile for container setup
+├── README.md              # Project documentation
+├── Report.md              # Work process and design notes
 ```
