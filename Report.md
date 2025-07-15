@@ -10,15 +10,15 @@ At first, I considered using Microsoft's phi-4 model, as the task suggested. But
 ## 5. 🛠 Prompting for Fixes
 While designing the prompt sent to the model, I made sure to not only ask for vulnerability detection but also to suggest possible fixes. That way, the tool doesn't just identify problems — it helps solve them too. This made the output more actionable and developer-friendly.
 ## 6. 🐳 First Try with Docker
-I tried running everything inside a Docker container from the start. But... I hit a wall. As someone not too familiar with Docker, I ran into lots of small (and frustrating) problems.
+I tried running everything inside a Docker container from the start. But... I hit a wall. As someone not too familiar with Docker, I ran into lots of small (and frustrating) problems, mainly that the python script was not triggered.  
 ## 7. 🔄 Changing Strategy
 After a few hours of struggling, I pivoted. I set up a Python virtual environment, installed all the dependencies there, and ran the code outside of Docker. It worked!
-## 8. ✅ Initial Success
-Once the virtual environment setup was working, I shared the tool with a few friends—it worked for them too. That gave me the green light to continue.
-## 9. 🧪 Planning for Docker + Automation
-With a working version ready, I turned my focus back to Docker, planning to integrate it later with some automation. But first, I needed to solve another problem…
-## 10. ✂️ Handling Limitations
+## 8. ✂️ Handling Limitations
 The Ollama server had some limitations. To deal with that, I wrote logic to split the input (chunking) into smaller parts. This made processing more efficient and customizable depending on the model and the hardware.
+## 9. ✅ Initial Success
+Once the virtual environment setup was working, I shared the tool with a few friends—it worked for them too. That gave me the green light to continue.
+## 10. 🧪 Planning for Docker + Automation
+With a working version ready, I turned my focus back to Docker, planning to integrate it later with some automation.
 ## 11. 🧩 Final Touches 
 I built a precise process for chunking and analysis to ensure performance and reliability. It also prevented the model from consuming too much time or memory.
 ## 12. 🚀 Ready for Submission

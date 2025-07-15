@@ -27,8 +27,8 @@ This CLI tool detects security vulnerabilities in C/C++ source files using a loc
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/c-analyzer.git
-cd c-analyzer
+git https://github.com/Jadaan59/CyberArk--Home-assignment.git
+cd CyberArk--Home-assignment
 ```
 
 ### 2. Set Up Virtual Environment
@@ -68,7 +68,10 @@ Use the [official installer](https://ollama.com/download)
 ```bash
 ollama pull gemma3:4b
 ```
-
+Or if you want smaller version 
+```bash
+ollama pull gemma3:1b
+```
 Make sure the model download finishes completely before continuing.
 
 ---
