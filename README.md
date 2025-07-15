@@ -42,6 +42,8 @@ docker-compose up --build
 ```
 This exposes Ollama on port 11434 and mounts the `data/` directory.
 
+**After running the above command, open a new shell (terminal window) to interact with the running container.**
+
 ---
 
 ## 🏃 Usage
