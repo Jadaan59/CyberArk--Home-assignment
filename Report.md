@@ -1,25 +1,22 @@
 # 🧠 Work Process Report
-## 1. 📖 Understanding the Task
-Two days ago, I received a task. I started by reading it carefully to understand the requirements. The first thing I noticed: I needed to download a language model.
-## 2. 🔍 Exploring Options
-I explored different tools and came across Ollama, which seemed like a great way to download and run language models locally. That led me to the next decision.
-## 3. 🐍 Choosing Python
-Since the task involved analyzing documents and scripts—and I needed to interact with the Ollama server—I decided to use Python. It's perfect for scripting and flexible enough for server communication.
-## 4. 🧠 Picking the Right Model
-At first, I considered using Microsoft's phi-4 model, as the task suggested. But after a bit of research, I realized it was too heavy for my setup and would likely slow down development. Instead, I went with gemma3:4b. It’s smaller, lighter, and runs locally without needing a dedicated GPU — perfect for quick iteration and offline usage. It still provides strong results and seemed like the right balance between performance and practicality.
-## 5. 🛠 Prompting for Fixes
-While designing the prompt sent to the model, I made sure to not only ask for vulnerability detection but also to suggest possible fixes. That way, the tool doesn't just identify problems — it helps solve them too. This made the output more actionable and developer-friendly.
-## 6. 🐳 First Try with Docker
-I tried running everything inside a Docker container from the start. But... I hit a wall. As someone not too familiar with Docker, I ran into lots of small (and frustrating) problems, mainly that the python script was not triggered.  
-## 7. 🔄 Changing Strategy
-After a few hours of struggling, I pivoted. I set up a Python virtual environment, installed all the dependencies there, and ran the code outside of Docker. It worked!
-## 8. ✂️ Handling Limitations
-The Ollama server had some limitations. To deal with that, I wrote logic to split the input (chunking) into smaller parts. This made processing more efficient and customizable depending on the model and the hardware.
-## 9. ✅ Initial Success
-Once the virtual environment setup was working, I shared the tool with a few friends—it worked for them too. That gave me the green light to continue.
-## 10. 🧪 Planning for Docker + Automation
-With a working version ready, I turned my focus back to Docker, planning to integrate it later with some automation. I experimented with Docker and tried running Ollama inside a container, but due to model pull limitations during build-time and the nature of the serve loop, I decided to keep the tool lightweight and local for this version.
-## 11. 🧩 Final Touches 
-I built a precise process for chunking and analysis to ensure performance and reliability. It also prevented the model from consuming too much time or memory.
-## 12. 🚀 Ready for Submission
-With everything tested and working smoothly, I finalized the code and got it ready for submission. Mission accomplished!
+
+## 1. 📖 Reading the Assignment and Choosing a Model
+I started by carefully reading the assignment. The first step was to decide which model to use. After reviewing the suggestions, I realized that the phi4 model was not suitable for my hardware. Therefore, I decided to use gemma3, and after checking several versions, I chose gemma3:4b, which fit my requirements in terms of size and resources.
+
+## 2. 🐍 Choosing the Programming Language
+I chose Python because it is well-suited for working with LLMs. I discovered that there is a Python module that allows sending requests directly to the Ollama server, which made communication with the model much easier.
+
+## 3. ⬇️ Installing the Model and Initial Run
+I researched how to download the model locally using Ollama, installed it, and ran it locally to understand how it works. Then, I built the main Python script to interact with the model.
+
+## 4. ✂️ Splitting the Code File for Analysis
+During development, I noticed that analyzing large files all at once was problematic. I considered splitting by code blocks, but realized that a block could be too large. Therefore, I decided to split the file by a fixed number of lines to better control the size of each chunk sent for analysis.
+
+## 5. 🐳 First Attempt with Docker
+I tried to run everything in Docker right away, even though I didn't have much experience with it. I encountered many difficulties and issues, and at first, I couldn't figure out the cause. At this stage, I continued working without Docker.
+
+## 6. 🕵️ Solving the Docker Port Issue
+After further investigation, I realized the problem was with the port configuration in Docker—the container was not listening on the correct port, so the script didn't work. I reached out to friends who are more experienced with Docker, got some tips, and learned about Docker Compose. After correctly configuring the port and using Docker Compose, everything worked as expected.
+
+## 7. ✅ Completion and Submission
+After making sure everything worked—both locally and in Docker—I finished development and prepared the project for submission.
