@@ -2,7 +2,7 @@ import ollama
 import os
 import sys
 
-CHUNK_SIZE = 200  # lines per chunk
+CHUNK_SIZE = 150  # lines per chunk
 
 def chunk_code(code, size=CHUNK_SIZE):
     lines = code.splitlines()
