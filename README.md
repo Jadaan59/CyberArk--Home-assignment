@@ -31,8 +31,29 @@ git https://github.com/Jadaan59/CyberArk--Home-assignment.git
 cd CyberArk--Home-assignment
 ```
 
-### 2. Set Up Virtual Environment
+### 2. Set Up Virtual Environment and python
 
+#### 🐍 Don't Have Python Installed?
+
+No worries — here's how to get it:
+
+#### 🔸 Windows:
+1. Go to: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
+2. Download the latest version (Python 3.10+ recommended)
+3. During installation, **make sure to check**: ✅ *"Add Python to PATH"*
+
+#### 🔸 macOS:
+You can install Python using [Homebrew](https://brew.sh):
+```bash
+brew install python
+````
+
+#### 🔸 Linux (optional):
+```bash
+sudo apt update
+sudo apt install python3 python3-venv python3-pip
+```
+#### ✅ Create and Activate the Virtual Environment
 ```bash
 python3 -m venv venv
 source venv/bin/activate     # On Windows: venv\Scripts\activate
